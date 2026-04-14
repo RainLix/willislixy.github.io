@@ -1,91 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>My Homepage</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: #e2e8f0;
-    }
+<meta charset="UTF-8">
+<title>Willis | Personal Site</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    .container {
-      max-width: 900px;
-      margin: auto;
-      padding: 40px 20px;
-    }
+<style>
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: linear-gradient(-45deg, #0f172a, #020617, #1e293b, #0f172a);
+  background-size: 400% 400%;
+  animation: bg 10s ease infinite;
+  color: #e2e8f0;
+}
 
-    .header {
-      text-align: center;
-    }
+@keyframes bg {
+  0% {background-position: 0% 50%;}
+  50% {background-position: 100% 50%;}
+  100% {background-position: 0% 50%;}
+}
 
-    .avatar {
-      width: 120px;
-      border-radius: 50%;
-      border: 3px solid #38bdf8;
-    }
+.container {
+  max-width: 900px;
+  margin: auto;
+  padding: 40px 20px;
+}
 
-    h1 {
-      margin: 15px 0 5px;
-    }
+.header {
+  text-align: center;
+}
 
-    .subtitle {
-      color: #94a3b8;
-    }
+.avatar {
+  width: 120px;
+  border-radius: 50%;
+  border: 3px solid #38bdf8;
+  transition: 0.3s;
+}
+.avatar:hover {
+  transform: scale(1.1);
+}
 
-    .section {
-      margin-top: 40px;
-    }
+h1 {
+  margin: 15px 0 5px;
+}
 
-    .card {
-      background: #1e293b;
-      padding: 20px;
-      border-radius: 12px;
-      margin-top: 15px;
-      transition: 0.3s;
-    }
+.typing {
+  color: #38bdf8;
+  height: 24px;
+}
 
-    .card:hover {
-      transform: translateY(-5px);
-      background: #334155;
-    }
+.section {
+  margin-top: 40px;
+}
 
-    a {
-      color: #38bdf8;
-      text-decoration: none;
-    }
+.card {
+  background: rgba(30, 41, 59, 0.6);
+  backdrop-filter: blur(10px);
+  padding: 20px;
+  border-radius: 15px;
+  margin-top: 15px;
+  transition: 0.3s;
+  border: 1px solid rgba(255,255,255,0.05);
+}
 
-    footer {
-      text-align: center;
-      margin-top: 50px;
-      color: #64748b;
-    }
-  </style>
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 0 20px rgba(56,189,248,0.3);
+}
+
+a {
+  color: #38bdf8;
+  text-decoration: none;
+}
+
+footer {
+  text-align: center;
+  margin-top: 50px;
+  color: #64748b;
+}
+</style>
 </head>
 
 <body>
 
 <div class="container">
 
-  <!-- 头像 + 名字 -->
+  <!-- 头像 -->
   <div class="header">
     <img src="https://via.placeholder.com/120" class="avatar">
     <h1>Willis</h1>
-    <p class="subtitle">Personal Website / Tech / Life</p>
+    <div class="typing" id="typing"></div>
   </div>
 
-  <!-- 关于我 -->
+  <!-- 关于 -->
   <div class="section">
     <h2>👋 About Me</h2>
     <div class="card">
-      <p>
-        Hello! I'm Willis.  
-        I’m interested in tech, websites, and building cool stuff.
-      </p>
+      <p>I build websites, explore tech, and create cool stuff.</p>
     </div>
   </div>
 
@@ -94,25 +106,24 @@
     <h2>🚀 Projects</h2>
 
     <div class="card">
-      <h3>Project 1</h3>
-      <p>My first project description.</p>
-      <a href="#">View</a>
+      <h3>My Website</h3>
+      <p>My personal homepage.</p>
+      <a href="#">Visit</a>
     </div>
 
     <div class="card">
-      <h3>Project 2</h3>
-      <p>Another awesome project.</p>
-      <a href="#">View</a>
+      <h3>Future Project</h3>
+      <p>Coming soon...</p>
     </div>
 
   </div>
 
-  <!-- 联系方式 -->
+  <!-- 联系 -->
   <div class="section">
     <h2>📬 Contact</h2>
     <div class="card">
       <p>Email: your@email.com</p>
-      <p>GitHub: <a href="#">Your GitHub</a></p>
+      <p>GitHub: <a href="#">RainLix</a></p>
     </div>
   </div>
 
@@ -121,6 +132,33 @@
   </footer>
 
 </div>
+
+<script>
+const text = ["Tech Enthusiast", "Web Builder", "Explorer"];
+let i = 0, j = 0, current = "", isDeleting = false;
+
+function type() {
+  current = text[i];
+  if (isDeleting) {
+    document.getElementById("typing").innerHTML = current.substring(0, j--);
+  } else {
+    document.getElementById("typing").innerHTML = current.substring(0, j++);
+  }
+
+  if (!isDeleting && j === current.length) {
+    isDeleting = true;
+    setTimeout(type, 1000);
+  } else if (isDeleting && j === 0) {
+    isDeleting = false;
+    i = (i + 1) % text.length;
+    setTimeout(type, 300);
+  } else {
+    setTimeout(type, isDeleting ? 50 : 100);
+  }
+}
+
+type();
+</script>
 
 </body>
 </html>
