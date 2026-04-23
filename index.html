@@ -1,163 +1,803 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Willis Hacker Tools</title>
+<title>My Toolkit</title>
 <style>
-body {
-  margin:0;
-  font-family: monospace;
-  background: radial-gradient(circle at top, #020617, #000);
-  color:#00ffcc;
-}
-.container {
-  max-width:1000px;
-  margin:auto;
-  padding:20px;
-}
-h1 {
-  text-align:center;
-  text-shadow:0 0 10px #00ffcc;
-}
-.card {
-  background: rgba(0,255,204,0.05);
-  border:1px solid rgba(0,255,204,0.2);
-  border-radius:12px;
-  padding:20px;
-  margin-bottom:20px;
-  box-shadow:0 0 15px rgba(0,255,204,0.1);
-}
-select,input,button {
-  background:black;
-  color:#00ffcc;
-  border:1px solid #00ffcc;
-  padding:8px;
-  margin:5px;
-}
-button:hover {
-  background:#00ffcc;
-  color:black;
-  cursor:pointer;
-}
-.time-item {
-  display:flex;
-  justify-content:space-between;
-  margin-top:8px;
-}
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f8f7f4;
+    --surface: #ffffff;
+    --surface2: #f2f1ee;
+    --border: rgba(0,0,0,.1);
+    --border2: rgba(0,0,0,.18);
+    --text: #1a1a18;
+    --text2: #6b6a66;
+    --text3: #a09f9b;
+    --accent: #1a1a18;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141412;
+      --surface: #1e1e1b;
+      --surface2: #272724;
+      --border: rgba(255,255,255,.08);
+      --border2: rgba(255,255,255,.15);
+      --text: #f0efe9;
+      --text2: #9e9d99;
+      --text3: #5e5d5a;
+      --accent: #f0efe9;
+      --shadow: 0 1px 3px rgba(0,0,0,.3);
+    }
+  }
+
+  html { font-size: 16px; }
+  body {
+    font-family: -apple-system, 'Helvetica Neue', 'Segoe UI', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* ── HEADER ── */
+  header {
+    border-bottom: 0.5px solid var(--border);
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--surface);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    width: 28px; height: 28px;
+    border: 1.5px solid var(--text);
+    border-radius: 6px;
+    display: grid;
+    place-items: center;
+  }
+  .logo svg { width: 14px; height: 14px; }
+  header h1 { font-size: 14px; font-weight: 600; letter-spacing: .02em; color: var(--text); }
+  .header-nav { margin-left: auto; display: flex; gap: 4px; }
+  .tab-btn {
+    background: transparent;
+    border: 0.5px solid transparent;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text2);
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: all .15s;
+    letter-spacing: .01em;
+  }
+  .tab-btn:hover { color: var(--text); background: var(--surface2); }
+  .tab-btn.active { color: var(--text); background: var(--surface2); border-color: var(--border); }
+
+  /* ── LAYOUT ── */
+  main { max-width: 860px; margin: 0 auto; padding: 36px 24px 80px; }
+  .section { display: none; }
+  .section.visible { display: block; }
+
+  /* ── SECTION HEADER ── */
+  .sec-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .sec-header h2 { font-size: 13px; font-weight: 500; color: var(--text2); letter-spacing: .04em; text-transform: uppercase; }
+
+  /* ── ADD ROW ── */
+  .add-row { display: flex; gap: 8px; margin-bottom: 20px; }
+  .add-row select {
+    flex: 1;
+    font-size: 13px;
+    padding: 9px 12px;
+    border: 0.5px solid var(--border2);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text);
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 28px;
+  }
+  .add-row select:focus { border-color: var(--border2); }
+  .add-row button {
+    font-size: 13px;
+    font-weight: 500;
+    padding: 9px 18px;
+    border: 0.5px solid var(--border2);
+    border-radius: var(--radius-sm);
+    background: var(--text);
+    color: var(--bg);
+    cursor: pointer;
+    transition: opacity .15s;
+    white-space: nowrap;
+  }
+  .add-row button:hover { opacity: .85; }
+
+  /* ── CLOCKS GRID ── */
+  .clocks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+    gap: 12px;
+  }
+  .clock-card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 12px 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    transition: border-color .15s, box-shadow .15s;
+    box-shadow: var(--shadow);
+  }
+  .clock-card:hover { border-color: var(--border2); }
+  .clock-card .rm {
+    position: absolute;
+    top: 8px; right: 10px;
+    background: none;
+    border: none;
+    font-size: 16px;
+    line-height: 1;
+    color: var(--text3);
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity .15s;
+    padding: 0;
+  }
+  .clock-card:hover .rm { opacity: 1; }
+  .clock-card .rm:hover { color: var(--text); }
+  .city-name { font-size: 12px; font-weight: 600; color: var(--text); margin-top: 12px; text-align: center; letter-spacing: .02em; }
+  .city-time { font-size: 11px; color: var(--text2); margin-top: 4px; font-variant-numeric: tabular-nums; letter-spacing: .04em; }
+  .city-date { font-size: 10px; color: var(--text3); margin-top: 2px; }
+
+  /* ── UNIT CONVERTER ── */
+  .cat-tabs { display: flex; gap: 5px; margin-bottom: 18px; flex-wrap: wrap; }
+  .cat-btn {
+    font-size: 12px;
+    padding: 5px 13px;
+    border: 0.5px solid var(--border);
+    border-radius: 20px;
+    background: transparent;
+    color: var(--text2);
+    cursor: pointer;
+    transition: all .15s;
+    letter-spacing: .02em;
+  }
+  .cat-btn:hover { color: var(--text); border-color: var(--border2); }
+  .cat-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+  .conv-wrap {
+    display: grid;
+    grid-template-columns: 1fr 44px 1fr;
+    gap: 10px;
+    align-items: center;
+  }
+  .conv-box {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 16px 12px;
+    box-shadow: var(--shadow);
+  }
+  .conv-box label {
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 8px;
+  }
+  .conv-box input {
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--text);
+    background: none;
+    border: none;
+    width: 100%;
+    outline: none;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -.01em;
+  }
+  .conv-box input[readonly] { color: var(--text2); }
+  .conv-box select {
+    font-size: 12px;
+    background: none;
+    border: none;
+    color: var(--text2);
+    cursor: pointer;
+    outline: none;
+    margin-top: 6px;
+    max-width: 100%;
+    appearance: none;
+  }
+  .swap-btn {
+    width: 44px; height: 44px;
+    background: var(--surface);
+    border: 0.5px solid var(--border2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--text2);
+    transition: all .15s;
+    justify-self: center;
+    box-shadow: var(--shadow);
+  }
+  .swap-btn:hover { background: var(--surface2); color: var(--text); }
+  .formula {
+    font-size: 12px;
+    color: var(--text3);
+    margin-top: 14px;
+    text-align: center;
+    min-height: 18px;
+    letter-spacing: .01em;
+  }
+
+  /* ── CURRENCY ── */
+  .fx-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background: var(--surface2);
+    border-radius: var(--radius-sm);
+    margin-bottom: 16px;
+    border: 0.5px solid var(--border);
+  }
+  .fx-bar span { font-size: 12px; color: var(--text2); }
+  .fx-bar strong { font-size: 12px; color: var(--text); font-weight: 500; }
+
+  .fx-pairs { display: flex; flex-direction: column; gap: 8px; }
+  .fx-row {
+    display: grid;
+    grid-template-columns: 80px 110px 20px 80px 1fr 28px;
+    gap: 8px;
+    align-items: center;
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    box-shadow: var(--shadow);
+  }
+  .fx-row select {
+    font-size: 13px;
+    font-weight: 500;
+    padding: 4px 4px;
+    border: none;
+    background: none;
+    color: var(--text);
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    width: 100%;
+  }
+  .fx-row input {
+    font-size: 16px;
+    font-weight: 500;
+    padding: 4px 8px;
+    border: 0.5px solid var(--border);
+    border-radius: 6px;
+    background: var(--surface2);
+    color: var(--text);
+    outline: none;
+    font-variant-numeric: tabular-nums;
+    min-width: 0;
+    transition: border-color .15s;
+  }
+  .fx-row input:focus { border-color: var(--border2); }
+  .fx-arr { font-size: 14px; color: var(--text3); text-align: center; }
+  .fx-res {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .fx-res small { font-size: 11px; color: var(--text2); font-weight: 400; margin-left: 3px; }
+  .fx-rm {
+    background: none;
+    border: none;
+    font-size: 16px;
+    color: var(--text3);
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    justify-self: center;
+    transition: color .15s;
+  }
+  .fx-rm:hover { color: var(--text); }
+  .fx-add {
+    font-size: 13px;
+    padding: 9px 16px;
+    border: 0.5px dashed var(--border2);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text2);
+    cursor: pointer;
+    margin-top: 8px;
+    display: block;
+    width: 100%;
+    text-align: left;
+    transition: all .15s;
+  }
+  .fx-add:hover { background: var(--surface); color: var(--text); }
+  .note { font-size: 11px; color: var(--text3); margin-top: 14px; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    header { padding: 14px 16px; flex-wrap: wrap; gap: 10px; }
+    .header-nav { margin-left: 0; width: 100%; justify-content: flex-start; }
+    main { padding: 24px 16px 60px; }
+    .conv-wrap { grid-template-columns: 1fr; }
+    .swap-btn { transform: rotate(90deg); }
+    .fx-row { grid-template-columns: 70px 90px 16px 70px 1fr 24px; gap: 5px; padding: 8px 10px; }
+    .clocks-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+  }
 </style>
 </head>
 <body>
-<div class="container">
-<h1>⚡ WILLIS HACKER TOOLS</h1>
 
-<div class="card">
-<h2>🌍 World Clock</h2>
-<select id="timezoneSelect">
-<option value="Asia/Tokyo">Tokyo</option>
-<option value="America/New_York">New York</option>
-<option value="Europe/London">London</option>
-<option value="Asia/Shanghai">Shanghai</option>
-</select>
-<button onclick="addClock()">ADD</button>
-<div id="clocks"></div>
-</div>
+<header>
+  <div class="logo">
+    <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.2"/>
+      <line x1="7" y1="7" x2="7" y2="3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+      <line x1="7" y1="7" x2="9.5" y2="8.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <h1>My Toolkit</h1>
+  <nav class="header-nav">
+    <button class="tab-btn active" onclick="showTab('clocks',this)">World Clocks</button>
+    <button class="tab-btn" onclick="showTab('units',this)">Unit Converter</button>
+    <button class="tab-btn" onclick="showTab('fx',this)">Currency</button>
+  </nav>
+</header>
 
-<div class="card">
-<h2>🔁 Unit Converter</h2>
-<input type="number" id="inputValue" placeholder="value">
-<select id="conversionType">
-<option value="km_miles">KM → Miles</option>
-<option value="miles_km">Miles → KM</option>
-<option value="c_f">C → F</option>
-<option value="f_c">F → C</option>
-</select>
-<button onclick="convert()">RUN</button>
-<p id="result"></p>
-</div>
+<main>
 
-<div class="card">
-<h2>💱 Exchange Rate</h2>
-<input type="number" id="currencyInput" placeholder="amount">
-<select id="fromCurrency">
-<option value="USD">USD</option>
-<option value="JPY">JPY</option>
-<option value="CNY">CNY</option>
-<option value="EUR">EUR</option>
-</select>
-→
-<select id="toCurrency">
-<option value="JPY">JPY</option>
-<option value="USD">USD</option>
-<option value="CNY">CNY</option>
-<option value="EUR">EUR</option>
-</select>
-<button onclick="convertCurrency()">CONVERT</button>
-<p id="currencyResult"></p>
-</div>
+  <!-- CLOCKS -->
+  <div class="section visible" id="sec-clocks">
+    <div class="sec-header">
+      <h2>World Clocks</h2>
+    </div>
+    <div class="add-row">
+      <select id="city-sel"><option value="">Add a city...</option></select>
+      <button onclick="addClock()">Add Clock</button>
+    </div>
+    <div class="clocks-grid" id="clocks-grid"></div>
+  </div>
 
-</div>
+  <!-- UNITS -->
+  <div class="section" id="sec-units">
+    <div class="sec-header">
+      <h2>Unit Converter</h2>
+    </div>
+    <div class="cat-tabs" id="cat-tabs"></div>
+    <div class="conv-wrap">
+      <div class="conv-box">
+        <label>From</label>
+        <input type="number" id="from-val" value="1" oninput="doConvert()">
+        <select id="from-unit" onchange="doConvert()"></select>
+      </div>
+      <button class="swap-btn" onclick="swapUnits()" title="Swap">⇌</button>
+      <div class="conv-box">
+        <label>To</label>
+        <input type="number" id="to-val" readonly>
+        <select id="to-unit" onchange="doConvert()"></select>
+      </div>
+    </div>
+    <div class="formula" id="formula"></div>
+  </div>
+
+  <!-- CURRENCY -->
+  <div class="section" id="sec-fx">
+    <div class="sec-header">
+      <h2>Currency</h2>
+    </div>
+    <div class="fx-bar">
+      <span id="fx-status">Loading rates...</span>
+      <strong id="fx-updated"></strong>
+    </div>
+    <div class="fx-pairs" id="fx-pairs"></div>
+    <button class="fx-add" onclick="addFxPair()">+ Add currency pair</button>
+    <p class="note">Reference rates only — not for financial transactions.</p>
+  </div>
+
+</main>
 
 <script>
-let clocks = JSON.parse(localStorage.getItem('clocks')) || [];
+// ── TABS ──────────────────────────────────────────────────────────────────────
+function showTab(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('visible');
+  btn.classList.add('active');
+}
 
-function addClock(){
-  const tz = document.getElementById('timezoneSelect').value;
-  if(!clocks.includes(tz)){
-    clocks.push(tz);
-    localStorage.setItem('clocks', JSON.stringify(clocks));
-  }
+// ── CITIES ────────────────────────────────────────────────────────────────────
+const CITIES = [
+  // Asia
+  {g:'Asia',l:'Tokyo',tz:'Asia/Tokyo'},
+  {g:'Asia',l:'Beijing',tz:'Asia/Shanghai'},
+  {g:'Asia',l:'Shanghai',tz:'Asia/Shanghai'},
+  {g:'Asia',l:'Seoul',tz:'Asia/Seoul'},
+  {g:'Asia',l:'Singapore',tz:'Asia/Singapore'},
+  {g:'Asia',l:'Hong Kong',tz:'Asia/Hong_Kong'},
+  {g:'Asia',l:'Bangkok',tz:'Asia/Bangkok'},
+  {g:'Asia',l:'Mumbai',tz:'Asia/Kolkata'},
+  {g:'Asia',l:'Delhi',tz:'Asia/Kolkata'},
+  {g:'Asia',l:'Karachi',tz:'Asia/Karachi'},
+  {g:'Asia',l:'Dhaka',tz:'Asia/Dhaka'},
+  {g:'Asia',l:'Taipei',tz:'Asia/Taipei'},
+  {g:'Asia',l:'Kuala Lumpur',tz:'Asia/Kuala_Lumpur'},
+  {g:'Asia',l:'Jakarta',tz:'Asia/Jakarta'},
+  {g:'Asia',l:'Manila',tz:'Asia/Manila'},
+  {g:'Asia',l:'Hanoi',tz:'Asia/Ho_Chi_Minh'},
+  {g:'Asia',l:'Colombo',tz:'Asia/Colombo'},
+  {g:'Asia',l:'Kathmandu',tz:'Asia/Kathmandu'},
+  {g:'Asia',l:'Tashkent',tz:'Asia/Tashkent'},
+  // Middle East
+  {g:'Middle East',l:'Dubai',tz:'Asia/Dubai'},
+  {g:'Middle East',l:'Riyadh',tz:'Asia/Riyadh'},
+  {g:'Middle East',l:'Doha',tz:'Asia/Qatar'},
+  {g:'Middle East',l:'Kuwait City',tz:'Asia/Kuwait'},
+  {g:'Middle East',l:'Tehran',tz:'Asia/Tehran'},
+  {g:'Middle East',l:'Istanbul',tz:'Europe/Istanbul'},
+  {g:'Middle East',l:'Beirut',tz:'Asia/Beirut'},
+  {g:'Middle East',l:'Tel Aviv',tz:'Asia/Jerusalem'},
+  {g:'Middle East',l:'Amman',tz:'Asia/Amman'},
+  // Europe
+  {g:'Europe',l:'Moscow',tz:'Europe/Moscow'},
+  {g:'Europe',l:'Berlin',tz:'Europe/Berlin'},
+  {g:'Europe',l:'Paris',tz:'Europe/Paris'},
+  {g:'Europe',l:'London',tz:'Europe/London'},
+  {g:'Europe',l:'Madrid',tz:'Europe/Madrid'},
+  {g:'Europe',l:'Rome',tz:'Europe/Rome'},
+  {g:'Europe',l:'Amsterdam',tz:'Europe/Amsterdam'},
+  {g:'Europe',l:'Zurich',tz:'Europe/Zurich'},
+  {g:'Europe',l:'Stockholm',tz:'Europe/Stockholm'},
+  {g:'Europe',l:'Oslo',tz:'Europe/Oslo'},
+  {g:'Europe',l:'Warsaw',tz:'Europe/Warsaw'},
+  {g:'Europe',l:'Prague',tz:'Europe/Prague'},
+  {g:'Europe',l:'Vienna',tz:'Europe/Vienna'},
+  {g:'Europe',l:'Athens',tz:'Europe/Athens'},
+  {g:'Europe',l:'Lisbon',tz:'Europe/Lisbon'},
+  {g:'Europe',l:'Helsinki',tz:'Europe/Helsinki'},
+  {g:'Europe',l:'Kyiv',tz:'Europe/Kyiv'},
+  // Africa
+  {g:'Africa',l:'Cairo',tz:'Africa/Cairo'},
+  {g:'Africa',l:'Lagos',tz:'Africa/Lagos'},
+  {g:'Africa',l:'Nairobi',tz:'Africa/Nairobi'},
+  {g:'Africa',l:'Johannesburg',tz:'Africa/Johannesburg'},
+  {g:'Africa',l:'Cape Town',tz:'Africa/Johannesburg'},
+  {g:'Africa',l:'Casablanca',tz:'Africa/Casablanca'},
+  {g:'Africa',l:'Accra',tz:'Africa/Accra'},
+  {g:'Africa',l:'Addis Ababa',tz:'Africa/Addis_Ababa'},
+  {g:'Africa',l:'Dar es Salaam',tz:'Africa/Dar_es_Salaam'},
+  {g:'Africa',l:'Khartoum',tz:'Africa/Khartoum'},
+  {g:'Africa',l:'Algiers',tz:'Africa/Algiers'},
+  {g:'Africa',l:'Dakar',tz:'Africa/Dakar'},
+  {g:'Africa',l:'Abidjan',tz:'Africa/Abidjan'},
+  {g:'Africa',l:'Kampala',tz:'Africa/Kampala'},
+  {g:'Africa',l:'Lusaka',tz:'Africa/Lusaka'},
+  {g:'Africa',l:'Harare',tz:'Africa/Harare'},
+  {g:'Africa',l:'Maputo',tz:'Africa/Maputo'},
+  {g:'Africa',l:'Luanda',tz:'Africa/Luanda'},
+  {g:'Africa',l:'Douala',tz:'Africa/Douala'},
+  {g:'Africa',l:'Tunis',tz:'Africa/Tunis'},
+  {g:'Africa',l:'Tripoli',tz:'Africa/Tripoli'},
+  {g:'Africa',l:'Antananarivo',tz:'Indian/Antananarivo'},
+  {g:'Africa',l:'Kigali',tz:'Africa/Kigali'},
+  {g:'Africa',l:'Bamako',tz:'Africa/Bamako'},
+  {g:'Africa',l:'Kinshasa',tz:'Africa/Kinshasa'},
+  {g:'Africa',l:'Mogadishu',tz:'Africa/Mogadishu'},
+  {g:'Africa',l:'Windhoek',tz:'Africa/Windhoek'},
+  {g:'Africa',l:'Gaborone',tz:'Africa/Gaborone'},
+  {g:'Africa',l:'Lilongwe',tz:'Africa/Blantyre'},
+  // Americas
+  {g:'Americas',l:'New York',tz:'America/New_York'},
+  {g:'Americas',l:'Los Angeles',tz:'America/Los_Angeles'},
+  {g:'Americas',l:'Chicago',tz:'America/Chicago'},
+  {g:'Americas',l:'Toronto',tz:'America/Toronto'},
+  {g:'Americas',l:'Vancouver',tz:'America/Vancouver'},
+  {g:'Americas',l:'Mexico City',tz:'America/Mexico_City'},
+  {g:'Americas',l:'São Paulo',tz:'America/Sao_Paulo'},
+  {g:'Americas',l:'Buenos Aires',tz:'America/Argentina/Buenos_Aires'},
+  {g:'Americas',l:'Bogotá',tz:'America/Bogota'},
+  {g:'Americas',l:'Lima',tz:'America/Lima'},
+  {g:'Americas',l:'Santiago',tz:'America/Santiago'},
+  {g:'Americas',l:'Caracas',tz:'America/Caracas'},
+  // Pacific
+  {g:'Pacific',l:'Sydney',tz:'Australia/Sydney'},
+  {g:'Pacific',l:'Melbourne',tz:'Australia/Melbourne'},
+  {g:'Pacific',l:'Auckland',tz:'Pacific/Auckland'},
+  {g:'Pacific',l:'Honolulu',tz:'Pacific/Honolulu'},
+  {g:'Pacific',l:'Fiji',tz:'Pacific/Fiji'},
+  {g:'Pacific',l:'UTC',tz:'UTC'},
+];
+
+function initCitySelect() {
+  const sel = document.getElementById('city-sel');
+  const groups = {};
+  CITIES.forEach(c => { if (!groups[c.g]) groups[c.g] = []; groups[c.g].push(c); });
+  Object.keys(groups).forEach(g => {
+    const og = document.createElement('optgroup');
+    og.label = g;
+    groups[g].forEach(c => {
+      const o = document.createElement('option');
+      o.value = c.tz + '|' + c.l;
+      o.textContent = c.l;
+      og.appendChild(o);
+    });
+    sel.appendChild(og);
+  });
+}
+
+let activeClocks = [
+  {l:'Tokyo', tz:'Asia/Tokyo'},
+  {l:'New York', tz:'America/New_York'},
+  {l:'London', tz:'Europe/London'},
+];
+
+function addClock() {
+  const sel = document.getElementById('city-sel');
+  if (!sel.value) return;
+  const [tz, l] = sel.value.split('|');
+  if (activeClocks.some(c => c.tz === tz && c.l === l)) return;
+  activeClocks.push({l, tz});
+  renderClocks();
+  sel.value = '';
+}
+
+function removeClock(i) {
+  activeClocks.splice(i, 1);
   renderClocks();
 }
 
-function renderClocks(){
-  const container = document.getElementById('clocks');
-  container.innerHTML = '';
-  clocks.forEach(tz=>{
-    const div = document.createElement('div');
-    div.className='time-item';
-    div.innerHTML=`<span>${tz}</span><span id="${tz}"></span>`;
-    container.appendChild(div);
+function makeSVG(i) {
+  const ticks = [...Array(60)].map((_,n) => {
+    const a = (n * 6 - 90) * Math.PI / 180;
+    const isMaj = n % 5 === 0;
+    const r1 = 46, r2 = isMaj ? 38 : 42;
+    const sw = isMaj ? 1.5 : 0.7;
+    return `<line x1="${(50+r1*Math.cos(a)).toFixed(2)}" y1="${(50+r1*Math.sin(a)).toFixed(2)}" x2="${(50+r2*Math.cos(a)).toFixed(2)}" y2="${(50+r2*Math.sin(a)).toFixed(2)}" stroke="${isMaj ? 'rgba(0,0,0,.3)' : 'rgba(0,0,0,.12)'}" stroke-width="${sw}" stroke-linecap="round"/>`;
+  }).join('');
+  return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="100" height="100" style="display:block">
+    <circle cx="50" cy="50" r="48" fill="none" stroke="rgba(0,0,0,.08)" stroke-width="1"/>
+    ${ticks}
+    <line id="h-${i}" x1="50" y1="50" x2="50" y2="32" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+    <line id="m-${i}" x1="50" y1="50" x2="50" y2="18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    <line id="s-${i}" x1="50" y1="56" x2="50" y2="14" stroke="#999" stroke-width="1" stroke-linecap="round"/>
+    <circle cx="50" cy="50" r="2.5" fill="currentColor"/>
+    <circle cx="50" cy="50" r="1" fill="white"/>
+  </svg>`;
+}
+
+function renderClocks() {
+  const g = document.getElementById('clocks-grid');
+  g.innerHTML = '';
+  activeClocks.forEach((c, i) => {
+    const card = document.createElement('div');
+    card.className = 'clock-card';
+    card.innerHTML = `
+      <button class="rm" onclick="removeClock(${i})" title="Remove">×</button>
+      ${makeSVG(i)}
+      <div class="city-name">${c.l}</div>
+      <div class="city-time" id="dt-${i}"></div>
+      <div class="city-date" id="dd-${i}"></div>
+    `;
+    g.appendChild(card);
   });
 }
 
-function updateTime(){
-  clocks.forEach(tz=>{
-    const now = new Date().toLocaleString('en-US',{timeZone:tz});
-    const el = document.getElementById(tz);
-    if(el) el.innerText = now;
+function tickClocks() {
+  const now = new Date();
+  activeClocks.forEach((c, i) => {
+    try {
+      const get = (opts) => new Intl.DateTimeFormat('en-US', {...opts, timeZone: c.tz}).format(now);
+      const h = parseInt(get({hour:'2-digit', hour12:false})) % 24;
+      const m = parseInt(get({minute:'2-digit'}));
+      const s = parseInt(get({second:'2-digit'}));
+      const hA = ((h % 12) + m / 60 + s / 3600) * 30 - 90;
+      const mA = (m + s / 60) * 6 - 90;
+      const sA = s * 6 - 90;
+      const setHand = (id, angle, len) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const r = angle * Math.PI / 180;
+        el.setAttribute('x2', (50 + len * Math.cos(r)).toFixed(2));
+        el.setAttribute('y2', (50 + len * Math.sin(r)).toFixed(2));
+      };
+      setHand('h-'+i, hA, 18);
+      setHand('m-'+i, mA, 32);
+      setHand('s-'+i, sA, 36);
+      const te = document.getElementById('dt-'+i);
+      const de = document.getElementById('dd-'+i);
+      if (te) te.textContent = get({hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false});
+      if (de) de.textContent = get({weekday:'short', month:'short', day:'numeric'});
+    } catch(e) {}
   });
 }
-setInterval(updateTime,1000);
-renderClocks();
 
-function convert(){
-  const val = parseFloat(document.getElementById('inputValue').value);
-  const type = document.getElementById('conversionType').value;
-  let result;
+// ── UNITS ─────────────────────────────────────────────────────────────────────
+const CATS = {
+  Length:  { units: {mm:.001, cm:.01, m:1, km:1000, 'in':.0254, ft:.3048, yd:.9144, mi:1609.344} },
+  Weight:  { units: {mg:1e-6, g:.001, kg:1, t:1000, oz:.0283495, lb:.453592, st:6.35029} },
+  Temp:    { special:true, units: ['°C','°F','K'] },
+  Area:    { units: {'mm²':1e-6,'cm²':1e-4,'m²':1,'km²':1e6,'in²':6.4516e-4,'ft²':.092903, ac:4046.86, ha:10000} },
+  Volume:  { units: {ml:.001, cl:.01, dl:.1, L:1, 'm³':1000, tsp:.00492892, tbsp:.0147868, 'fl oz':.0295735, cup:.236588, pt:.473176, qt:.946353, gal:3.78541} },
+  Speed:   { units: {'km/h':1,'m/s':3.6, mph:1.60934, kn:1.852,'ft/s':1.09728} },
+  Data:    { units: {bit:1, B:8, KB:8192, MB:8388608, GB:8589934592, TB:8796093022208} },
+  Time:    { units: {ms:.001, s:1, min:60, h:3600, day:86400, wk:604800, mo:2592000, yr:31536000} },
+};
+let currentCat = 'Length';
 
-  switch(type){
-    case 'km_miles': result = val*0.621371; break;
-    case 'miles_km': result = val/0.621371; break;
-    case 'c_f': result = (val*9/5)+32; break;
-    case 'f_c': result = (val-32)*5/9; break;
+function initCats() {
+  const tabs = document.getElementById('cat-tabs');
+  Object.keys(CATS).forEach(cat => {
+    const b = document.createElement('button');
+    b.className = 'cat-btn' + (cat === currentCat ? ' active' : '');
+    b.textContent = cat;
+    b.onclick = () => {
+      currentCat = cat;
+      document.querySelectorAll('.cat-btn').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      loadCat();
+    };
+    tabs.appendChild(b);
+  });
+  loadCat();
+}
+
+function loadCat() {
+  const cat = CATS[currentCat];
+  const us = cat.special ? cat.units : Object.keys(cat.units);
+  ['from-unit','to-unit'].forEach((id, si) => {
+    const sel = document.getElementById(id);
+    sel.innerHTML = '';
+    us.forEach((u, i) => {
+      const o = document.createElement('option');
+      o.value = u; o.textContent = u;
+      if ((si === 0 && i === 0) || (si === 1 && i === 1)) o.selected = true;
+      sel.appendChild(o);
+    });
+  });
+  document.getElementById('from-val').value = 1;
+  doConvert();
+}
+
+function doConvert() {
+  const cat = CATS[currentCat];
+  const fu = document.getElementById('from-unit').value;
+  const tu = document.getElementById('to-unit').value;
+  const val = parseFloat(document.getElementById('from-val').value);
+  const out = document.getElementById('to-val');
+  const hint = document.getElementById('formula');
+  if (isNaN(val)) { out.value = ''; hint.textContent = ''; return; }
+  let res;
+  if (cat.special) {
+    let c = fu === '°C' ? val : fu === '°F' ? (val-32)*5/9 : val-273.15;
+    res = tu === '°C' ? c : tu === '°F' ? c*9/5+32 : c+273.15;
+  } else {
+    res = (val * cat.units[fu]) / cat.units[tu];
   }
-  document.getElementById('result').innerText = 'Result: '+result;
+  const d = Math.abs(res) >= 100 ? 2 : Math.abs(res) >= 1 ? 4 : 6;
+  out.value = parseFloat(res.toFixed(d));
+  hint.textContent = val + ' ' + fu + ' = ' + out.value + ' ' + tu;
 }
 
-async function convertCurrency(){
-  const amount = document.getElementById('currencyInput').value;
-  const from = document.getElementById('fromCurrency').value;
-  const to = document.getElementById('toCurrency').value;
-
-  const res = await fetch(`https://api.exchangerate-api.com/v4/latest/${from}`);
-  const data = await res.json();
-
-  const rate = data.rates[to];
-  const result = amount * rate;
-
-  document.getElementById('currencyResult').innerText = `${amount} ${from} = ${result.toFixed(2)} ${to}`;
+function swapUnits() {
+  const fs = document.getElementById('from-unit'), ts = document.getElementById('to-unit');
+  const fv = document.getElementById('from-val'), tv = document.getElementById('to-val');
+  [fs.value, ts.value] = [ts.value, fs.value];
+  fv.value = tv.value || fv.value;
+  doConvert();
 }
+
+// ── CURRENCY ──────────────────────────────────────────────────────────────────
+const CURRS = [
+  'USD','EUR','JPY','CNY','GBP','HKD','KRW','SGD','AUD','CAD','CHF','INR',
+  'BRL','MXN','THB','TWD','SEK','NOK','NZD','RUB','ZAR','TRY','AED','SAR','MYR',
+  // Africa
+  'NGN','EGP','KES','ETB','GHS','TZS','UGX','MAD','DZD','TND',
+  'XOF','XAF','AOA','ZMW','MZN','BWP','RWF','SOS','NAD','MWK',
+  'LSL','SZL','GMD','SLL','MRU',
+];
+
+let fxRates = {};
+let fxPairs = [
+  {from:'USD', to:'JPY', amt:1},
+  {from:'EUR', to:'JPY', amt:1},
+];
+
+async function loadFx() {
+  try {
+    const r = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+    if (!r.ok) throw 0;
+    const d = await r.json();
+    fxRates = {...d.rates, USD:1};
+    document.getElementById('fx-status').textContent = 'Live rates · exchangerate-api.com';
+    document.getElementById('fx-updated').textContent = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  } catch {
+    fxRates = {
+      USD:1,EUR:.92,JPY:154.5,CNY:7.24,GBP:.79,HKD:7.82,KRW:1370,SGD:1.35,
+      AUD:1.52,CAD:1.36,CHF:.90,INR:83.5,BRL:4.97,MXN:16.8,THB:36.5,TWD:32.1,
+      SEK:10.4,NOK:10.6,NZD:1.64,RUB:91.0,ZAR:18.5,TRY:32.1,AED:3.67,SAR:3.75,MYR:4.70,
+      NGN:1600,EGP:47,KES:130,ETB:57,GHS:15.5,TZS:2620,UGX:3800,MAD:9.9,
+      DZD:134,TND:3.1,XOF:600,XAF:600,AOA:850,ZMW:26.5,MZN:64,BWP:13.5,
+      RWF:1300,SOS:570,NAD:18.5,MWK:1700,LSL:18.5,SZL:18.5,GMD:67,SLL:22000,MRU:39,
+    };
+    document.getElementById('fx-status').textContent = 'Offline estimates — no live data';
+  }
+  renderFx();
+}
+
+function cvt(amt, f, t) {
+  if (!fxRates[f] || !fxRates[t] || isNaN(amt)) return null;
+  return (amt / fxRates[f]) * fxRates[t];
+}
+
+function renderFx() {
+  const c = document.getElementById('fx-pairs');
+  c.innerHTML = '';
+  fxPairs.forEach((p, i) => {
+    const mkOpts = (sel) => CURRS.map(cu =>
+      `<option value="${cu}"${cu===sel?' selected':''}>${cu}</option>`).join('');
+    const row = document.createElement('div');
+    row.className = 'fx-row';
+    row.innerHTML = `
+      <select title="From currency" onchange="fxPairs[${i}].from=this.value;renderFx()">${mkOpts(p.from)}</select>
+      <input type="number" value="${p.amt}" min="0" step="any"
+             oninput="fxPairs[${i}].amt=parseFloat(this.value)||0;renderFx()">
+      <span class="fx-arr">→</span>
+      <select title="To currency" onchange="fxPairs[${i}].to=this.value;renderFx()">${mkOpts(p.to)}</select>
+      <span class="fx-res" id="fx-r-${i}"></span>
+      <button class="fx-rm" title="Remove" onclick="fxPairs.splice(${i},1);renderFx()">×</button>
+    `;
+    c.appendChild(row);
+    const res = cvt(p.amt, p.from, p.to);
+    const el = document.getElementById('fx-r-'+i);
+    if (el && res !== null) {
+      const disp = res >= 10000 ? res.toFixed(0) : res >= 100 ? res.toFixed(2) : res >= 1 ? res.toFixed(3) : res.toFixed(5);
+      el.innerHTML = disp + ' <small>' + p.to + '</small>';
+    }
+  });
+}
+
+function addFxPair() {
+  fxPairs.push({from:'USD', to:'EUR', amt:1});
+  renderFx();
+}
+
+// ── BOOT ──────────────────────────────────────────────────────────────────────
+initCitySelect();
+renderClocks();
+tickClocks();
+setInterval(tickClocks, 1000);
+initCats();
+loadFx();
 </script>
 </body>
 </html>
