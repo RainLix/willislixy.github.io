@@ -2,163 +2,162 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Willis | Personal Site</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<title>Willis Hacker Tools</title>
 <style>
 body {
-  margin: 0;
-  font-family: "Segoe UI", sans-serif;
-  background: linear-gradient(-45deg, #0f172a, #020617, #1e293b, #0f172a);
-  background-size: 400% 400%;
-  animation: bg 10s ease infinite;
-  color: #e2e8f0;
+  margin:0;
+  font-family: monospace;
+  background: radial-gradient(circle at top, #020617, #000);
+  color:#00ffcc;
 }
-
-@keyframes bg {
-  0% {background-position: 0% 50%;}
-  50% {background-position: 100% 50%;}
-  100% {background-position: 0% 50%;}
-}
-
 .container {
-  max-width: 900px;
-  margin: auto;
-  padding: 40px 20px;
+  max-width:1000px;
+  margin:auto;
+  padding:20px;
 }
-
-.header {
-  text-align: center;
-}
-
-.avatar {
-  width: 120px;
-  border-radius: 50%;
-  border: 3px solid #38bdf8;
-  transition: 0.3s;
-}
-.avatar:hover {
-  transform: scale(1.1);
-}
-
 h1 {
-  margin: 15px 0 5px;
+  text-align:center;
+  text-shadow:0 0 10px #00ffcc;
 }
-
-.typing {
-  color: #38bdf8;
-  height: 24px;
-}
-
-.section {
-  margin-top: 40px;
-}
-
 .card {
-  background: rgba(30, 41, 59, 0.6);
-  backdrop-filter: blur(10px);
-  padding: 20px;
-  border-radius: 15px;
-  margin-top: 15px;
-  transition: 0.3s;
-  border: 1px solid rgba(255,255,255,0.05);
+  background: rgba(0,255,204,0.05);
+  border:1px solid rgba(0,255,204,0.2);
+  border-radius:12px;
+  padding:20px;
+  margin-bottom:20px;
+  box-shadow:0 0 15px rgba(0,255,204,0.1);
 }
-
-.card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 0 20px rgba(56,189,248,0.3);
+select,input,button {
+  background:black;
+  color:#00ffcc;
+  border:1px solid #00ffcc;
+  padding:8px;
+  margin:5px;
 }
-
-a {
-  color: #38bdf8;
-  text-decoration: none;
+button:hover {
+  background:#00ffcc;
+  color:black;
+  cursor:pointer;
 }
-
-footer {
-  text-align: center;
-  margin-top: 50px;
-  color: #64748b;
+.time-item {
+  display:flex;
+  justify-content:space-between;
+  margin-top:8px;
 }
 </style>
 </head>
-
 <body>
-
 <div class="container">
+<h1>⚡ WILLIS HACKER TOOLS</h1>
 
-  <!-- 头像 -->
-  <div class="header">
-    <img src="https://via.placeholder.com/120" class="avatar">
-    <h1>Willis</h1>
-    <div class="typing" id="typing"></div>
-  </div>
+<div class="card">
+<h2>🌍 World Clock</h2>
+<select id="timezoneSelect">
+<option value="Asia/Tokyo">Tokyo</option>
+<option value="America/New_York">New York</option>
+<option value="Europe/London">London</option>
+<option value="Asia/Shanghai">Shanghai</option>
+</select>
+<button onclick="addClock()">ADD</button>
+<div id="clocks"></div>
+</div>
 
-  <!-- 关于 -->
-  <div class="section">
-    <h2>👋 About Me</h2>
-    <div class="card">
-      <p>I build websites, explore tech, and create cool stuff.</p>
-    </div>
-  </div>
+<div class="card">
+<h2>🔁 Unit Converter</h2>
+<input type="number" id="inputValue" placeholder="value">
+<select id="conversionType">
+<option value="km_miles">KM → Miles</option>
+<option value="miles_km">Miles → KM</option>
+<option value="c_f">C → F</option>
+<option value="f_c">F → C</option>
+</select>
+<button onclick="convert()">RUN</button>
+<p id="result"></p>
+</div>
 
-  <!-- 项目 -->
-  <div class="section">
-    <h2>🚀 Projects</h2>
-
-    <div class="card">
-      <h3>My Website</h3>
-      <p>My personal homepage.</p>
-      <a href="#">Visit</a>
-    </div>
-
-    <div class="card">
-      <h3>Future Project</h3>
-      <p>Coming soon...</p>
-    </div>
-
-  </div>
-
-  <!-- 联系 -->
-  <div class="section">
-    <h2>📬 Contact</h2>
-    <div class="card">
-      <p>Email: your@email.com</p>
-      <p>GitHub: <a href="#">RainLix</a></p>
-    </div>
-  </div>
-
-  <footer>
-    © 2026 Willis
-  </footer>
+<div class="card">
+<h2>💱 Exchange Rate</h2>
+<input type="number" id="currencyInput" placeholder="amount">
+<select id="fromCurrency">
+<option value="USD">USD</option>
+<option value="JPY">JPY</option>
+<option value="CNY">CNY</option>
+<option value="EUR">EUR</option>
+</select>
+→
+<select id="toCurrency">
+<option value="JPY">JPY</option>
+<option value="USD">USD</option>
+<option value="CNY">CNY</option>
+<option value="EUR">EUR</option>
+</select>
+<button onclick="convertCurrency()">CONVERT</button>
+<p id="currencyResult"></p>
+</div>
 
 </div>
 
 <script>
-const text = ["Tech Enthusiast", "Web Builder", "Explorer"];
-let i = 0, j = 0, current = "", isDeleting = false;
+let clocks = JSON.parse(localStorage.getItem('clocks')) || [];
 
-function type() {
-  current = text[i];
-  if (isDeleting) {
-    document.getElementById("typing").innerHTML = current.substring(0, j--);
-  } else {
-    document.getElementById("typing").innerHTML = current.substring(0, j++);
+function addClock(){
+  const tz = document.getElementById('timezoneSelect').value;
+  if(!clocks.includes(tz)){
+    clocks.push(tz);
+    localStorage.setItem('clocks', JSON.stringify(clocks));
   }
-
-  if (!isDeleting && j === current.length) {
-    isDeleting = true;
-    setTimeout(type, 1000);
-  } else if (isDeleting && j === 0) {
-    isDeleting = false;
-    i = (i + 1) % text.length;
-    setTimeout(type, 300);
-  } else {
-    setTimeout(type, isDeleting ? 50 : 100);
-  }
+  renderClocks();
 }
 
-type();
-</script>
+function renderClocks(){
+  const container = document.getElementById('clocks');
+  container.innerHTML = '';
+  clocks.forEach(tz=>{
+    const div = document.createElement('div');
+    div.className='time-item';
+    div.innerHTML=`<span>${tz}</span><span id="${tz}"></span>`;
+    container.appendChild(div);
+  });
+}
 
+function updateTime(){
+  clocks.forEach(tz=>{
+    const now = new Date().toLocaleString('en-US',{timeZone:tz});
+    const el = document.getElementById(tz);
+    if(el) el.innerText = now;
+  });
+}
+setInterval(updateTime,1000);
+renderClocks();
+
+function convert(){
+  const val = parseFloat(document.getElementById('inputValue').value);
+  const type = document.getElementById('conversionType').value;
+  let result;
+
+  switch(type){
+    case 'km_miles': result = val*0.621371; break;
+    case 'miles_km': result = val/0.621371; break;
+    case 'c_f': result = (val*9/5)+32; break;
+    case 'f_c': result = (val-32)*5/9; break;
+  }
+  document.getElementById('result').innerText = 'Result: '+result;
+}
+
+async function convertCurrency(){
+  const amount = document.getElementById('currencyInput').value;
+  const from = document.getElementById('fromCurrency').value;
+  const to = document.getElementById('toCurrency').value;
+
+  const res = await fetch(`https://api.exchangerate-api.com/v4/latest/${from}`);
+  const data = await res.json();
+
+  const rate = data.rates[to];
+  const result = amount * rate;
+
+  document.getElementById('currencyResult').innerText = `${amount} ${from} = ${result.toFixed(2)} ${to}`;
+}
+</script>
 </body>
 </html>
