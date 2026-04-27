@@ -468,20 +468,17 @@
     }
 
     .fx-row {
-      display: grid;
-      grid-template-columns: 58px 1fr 14px 58px auto 18px;
-      gap: 6px;
+      display: flex;
       align-items: center;
-      padding: 9px 12px;
+      gap: 8px;
+      padding: 10px 12px;
       background: var(--paper2);
       border: 1px solid var(--rule2);
       border-radius: 3px;
       transition: border-color .15s;
     }
 
-    .fx-row:hover {
-      border-color: var(--ink2);
-    }
+    .fx-row:hover { border-color: var(--ink2); }
 
     .fx-sel {
       font-family: var(--mono);
@@ -493,50 +490,61 @@
       cursor: pointer;
       outline: none;
       appearance: none;
-      width: 100%;
+      width: 52px;
+      flex-shrink: 0;
     }
 
     .fx-inp {
       font-family: var(--mono);
       font-size: 13px;
-      padding: 4px 7px;
+      padding: 5px 8px;
       border: 1px solid var(--rule2);
       border-radius: 2px;
       background: var(--paper);
       color: var(--ink);
       outline: none;
-      width: 100%;
-      min-width: 0;
+      width: 80px;
+      flex-shrink: 0;
       transition: border-color .15s;
+      -moz-appearance: textfield;
     }
 
-    .fx-inp:focus {
-      border-color: var(--ink2);
+    .fx-inp::-webkit-outer-spin-button,
+    .fx-inp::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
     }
+
+    .fx-inp:focus { border-color: var(--ink2); }
 
     .fx-arr {
       font-family: var(--mono);
-      font-size: 11px;
+      font-size: 13px;
       color: var(--ink3);
-      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .fx-res-wrap {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      align-items: baseline;
+      gap: 5px;
     }
 
     .fx-res {
       font-family: var(--mono);
-      font-size: 13px;
+      font-size: 15px;
       font-weight: 500;
       color: var(--ink);
-      white-space: normal;
-      word-break: break-word;
-      line-height: 1.4;
+      white-space: nowrap;
     }
 
-    .fx-res em {
-      font-style: normal;
-      font-size: 9px;
+    .fx-res-cur {
+      font-family: var(--mono);
+      font-size: 10px;
       color: var(--ink3);
-      margin-left: 3px;
-      letter-spacing: .06em;
+      letter-spacing: .08em;
     }
 
     .fx-rm {
@@ -544,19 +552,16 @@
       border: none;
       color: var(--ink3);
       cursor: pointer;
-      font-size: 13px;
-      padding: 0;
+      font-size: 15px;
+      padding: 0 0 0 4px;
+      flex-shrink: 0;
       opacity: 0;
+      line-height: 1;
       transition: color .15s;
     }
 
-    .fx-row:hover .fx-rm {
-      opacity: 1;
-    }
-
-    .fx-rm:hover {
-      color: var(--ink);
-    }
+    .fx-row:hover .fx-rm { opacity: 1; }
+    .fx-rm:hover { color: var(--ink); }
 
     .btn-dash {
       font-family: var(--mono);
@@ -1180,10 +1185,20 @@
       fxPairs.forEach((p, i) => {
         const mkO = s => CURRS.map(cu => `<option value="${cu}"${cu === s ? ' selected' : ''}>${cu}</option>`).join('');
         const row = document.createElement('div'); row.className = 'fx-row';
-        row.innerHTML = `<select class="fx-sel" onchange="fxPairs[${i}].from=this.value;renderFx()">${mkO(p.from)}</select><input class="fx-inp" type="number" value="${p.amt}" min="0" step="any" oninput="fxPairs[${i}].amt=parseFloat(this.value)||0;renderFx()"><span class="fx-arr">→</span><select class="fx-sel" onchange="fxPairs[${i}].to=this.value;renderFx()">${mkO(p.to)}</select><span class="fx-res" id="fx-r-${i}"></span><button class="fx-rm" onclick="fxPairs.splice(${i},1);renderFx()" title="Remove">×</button>`;
+        const res = cvt(p.amt, p.from, p.to);
+        const resStr = res !== null ? res.toFixed(3) : '—';
+        row.innerHTML = `
+          <select class="fx-sel" onchange="fxPairs[${i}].from=this.value;renderFx()">${mkO(p.from)}</select>
+          <input class="fx-inp" type="text" inputmode="decimal" value="${p.amt}" placeholder="1"
+            oninput="fxPairs[${i}].amt=parseFloat(this.value)||0;renderFx()">
+          <span class="fx-arr">→</span>
+          <select class="fx-sel" onchange="fxPairs[${i}].to=this.value;renderFx()">${mkO(p.to)}</select>
+          <div class="fx-res-wrap">
+            <span class="fx-res" id="fx-r-${i}">${resStr}</span>
+            <span class="fx-res-cur">${p.to}</span>
+          </div>
+          <button class="fx-rm" onclick="fxPairs.splice(${i},1);renderFx()" title="Remove">×</button>`;
         c.appendChild(row);
-        const res = cvt(p.amt, p.from, p.to), el = document.getElementById('fx-r-' + i);
-        if (el && res !== null) { el.innerHTML = res.toFixed(3) + '<em>' + p.to + '</em>'; }
       });
     }
     function addFxPair() { fxPairs.push({ from: 'USD', to: 'EUR', amt: 1 }); renderFx(); }
